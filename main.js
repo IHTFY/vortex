@@ -55,7 +55,6 @@ const calcDestinations = (mult, mod) => {
   for (let i = 0; i < mod; i++) {
     destinations[i] = (i * mult) % mod;
   }
-  console.log(destinations);
 }
 
 // Initialize dots
@@ -107,9 +106,11 @@ const updateLines = (dots, destinations) => {
     .attr('y2', (d) => dots[d].y);
 };
 
-drawCircle(C, R);
-initLines(destinations);
-initDots(dots);
+const initDisplay = () => {
+  drawCircle(C, R);
+  initLines(destinations);
+  initDots(dots);
+};
 
 // A function that updates the display
 const updateDisplay = (mult, mod) => {
@@ -159,6 +160,5 @@ modulusSlider.oninput = (e) => {
 /**
  * Initialize the drawing
  */
-updateMultiplier(multiplier);
-updateModulus(modulus);
+initDisplay();
 updateDisplay(multiplier, modulus);
