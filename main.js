@@ -55,11 +55,12 @@ const calcDestinations = (mult, mod) => {
   for (let i = 0; i < mod; i++) {
     destinations[i] = (i * mult) % mod;
   }
+  console.log(destinations);
 }
 
 // Initialize dots
 const initDots = () => {
-  dots = Array(1000).fill(0).map((v, i) => Math.random() * W);
+  dots = Array(1000).fill(0);
   dotSelection = svg.selectAll('circle[fill="orange"]').data(dots)
     .enter()
     .append('circle')
@@ -71,7 +72,7 @@ const initDots = () => {
 
 // Initilize lines
 const initLines = () => {
-  calcDestinations(multiplier, modulus);
+  destinations = Array(1000).fill(0);
   lineSelection = svg.selectAll('line').data(destinations)
     .enter()
     .append('line')
@@ -94,8 +95,8 @@ const updateDots = (dots) => {
     .attr('cy', (d) => d.y);
 };
 
-// Draw the dots
-const updateLines = (destinations) => {
+// Draw the lines
+const updateLines = (dots, destinations) => {
   lineSelection
     .data(destinations)
     .transition()
@@ -106,15 +107,16 @@ const updateLines = (destinations) => {
     .attr('y2', (d) => dots[d].y);
 };
 
-// A function that updates the display
 drawCircle(C, R);
-initDots(dots);
 initLines(destinations);
+initDots(dots);
+
+// A function that updates the display
 const updateDisplay = (mult, mod) => {
   calcDots(mod);
-  calcDestinations(mult, mod);
-  updateLines(destinations);
   updateDots(dots);
+  calcDestinations(mult, mod);
+  updateLines(dots, destinations);
 };
 
 // A function that updates the multiplier
