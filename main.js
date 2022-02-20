@@ -96,7 +96,6 @@ const updateDots = (dots) => {
 
 // Draw the dots
 const updateLines = (destinations) => {
-  console.log(destinations);
   lineSelection
     .data(destinations)
     .transition()
