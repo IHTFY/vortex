@@ -38,14 +38,17 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col s4"><h1>Vortex</h1></div>
-        <div class="col s8">
-          <p></p>
+        <h1>Vortex</h1>
+        <div class="col s12">
+          <p>
+            An implementation of the modular times table as seen in this
+            <a href="https://youtu.be/6ZrO90AI0c8?t=993">Mathologer video</a>.
+          </p>
         </div>
       </div>
+      <form action="#">
       <div class="row">
         <div class="col s12 xl4">
-          <form action="#">
             <div class="row">
               <div class="col s2 m3 input-field">
                 <input
@@ -53,7 +56,7 @@
                   type="number"
                   value="2"
                   min="1"
-                  max="1000"
+                  max="100"
                   class="validate"
                 />
                 <label for="multiplierInput">Multiplier</label>
@@ -64,39 +67,68 @@
                   id="multiplierSlider"
                   value="2"
                   min="1"
-                  max="1000"
+                  max="100"
                 />
                 <label for="multiplierSlider">Multiplier</label>
               </p>
             </div>
-
+            
             <div class="row">
-              <div class="col s2 m3 input-field">
-                <input
-                  id="modulusInput"
-                  type="number"
-                  value="9"
-                  min="1"
-                  max="1000"
-                  class="validate"
-                />
-                <label for="modulusInput">Modulus</label>
-              </div>
-              <p class="col s10 m9 range-field">
-                <input
-                  type="range"
-                  id="modulusSlider"
-                  value="9"
-                  min="1"
-                  max="1000"
-                />
-                <label for="modulusSlider">Modulus</label>
+            <div class="col s2 m3 input-field">
+              <input
+                id="modulusInput"
+                type="number"
+                value="9"
+                min="1"
+                max="100"
+                class="validate"
+              />
+              <label for="modulusInput">Modulus</label>
+            </div>
+            <p class="col s10 m9 range-field">
+              <input
+                type="range"
+                id="modulusSlider"
+                value="9"
+                min="1"
+                max="100"
+              />
+              <label for="modulusSlider">Modulus</label>
+            </p>
+          </div>
+
+          <div class="row">
+            <div class="col s12">
+              <p>
+                <label for="showArrowsCheckbox">
+                  <input type="checkbox" id="showArrowsCheckbox" />
+                  <span>Show Arrows</span>
+                </label>
+              </p>
+              <p>
+                <label for="colorLinesCheckbox">
+                  <input type="checkbox" id="colorLinesCheckbox" checked />
+                  <span>Color Lines</span>
+                </label>
+              </p>
+              <p>
+                <label for="byLengthCheckbox">
+                  <input type="radio" name="colorMode" id="byLengthCheckbox" checked />
+                  <span>By Length</span>
+                </label>
+              </p>
+              <p>
+                <label for="byLoopCheckbox">
+                  <input type="radio" name="colorMode" id="byLoopCheckbox" />
+                  <span>By Loop</span>
+                </label>
               </p>
             </div>
-          </form>
+          </div>
+        </form>
         </div>
-        <div id="display" class="col s12 xl8"></div>
       </div>
+      <div id="display" class="col s12 xl8"></div>
     </div>
   </body>
 </html>
