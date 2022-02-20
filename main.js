@@ -40,11 +40,10 @@ const lineColor = (startIndex, endIndex, mod, loops) => {
   if (dist < 1) return 'none';
   if (!colorLinesCheckbox.checked) return 'navy';
   if (byLengthCheckbox.checked) return d3.interpolateHclLong("blue", "red")(dist / Math.floor(mod / 2));
-  // TODO
-  // if (byLoopCheckbox.checked) {
-  //   const numLoops = Math.max(...loops);
-  //   return d3.interpolateHclLong("blue", "red")(loops[startIndex] / numLoops);
-  // };
+  if (byLoopCheckbox.checked) {
+    const numLoops = Math.max(...loops);
+    return d3.interpolateHclLong("blue", "red")(loops[endIndex] / numLoops);
+  };
   return 'navy';
 };
 
@@ -54,15 +53,12 @@ svg.append('defs').append('marker')
   .attr('viewBox', '0 0 10 6')
   .attr('refX', 10)
   .attr('refY', 3)
-  .attr('markerWidth', 25)
-  .attr('markerHeight', 15)
+  .attr('markerWidth', 5)
+  .attr('markerHeight', 3)
   .attr('orient', 'auto-start-reverse')
   .append('path')
   .attr('d', 'M 0 0 L 10 3 L 0 6 z')
   .attr('fill', 'gray')
-  .attr('stroke', 'gray')
-  .attr('stroke-width', 0.5)
-  .attr('stroke-linejoin', 'round');
 // .attr('fill', 'context-fill');
 
 // D3 selections
@@ -104,30 +100,48 @@ const calcDestinations = (mult, mod) => {
   return destinations;
 }
 
-// TODO
 // Calculate Loops
 const calcLoops = (dest, mod) => {
-  console.log(dest);
-  let loopsEnumerated = Array(mod); // [0, 1, 1, 2, 1, 1, 2, 1, 1]
-  let currentLoop = 0;
-  let currentIndex = 0;
+  dest = dest.slice(0, mod);
+  let enumerated = Array(mod);
+  let loopNumber = 0;
+  let frontier = [];
+  let traced = [];
 
-  let iter = 0;
-  for (let visited = 0; visited < mod && iter < 50; iter++) {
-    console.log(`${currentLoop} : ${currentIndex}=>${dest[currentIndex]} : ${loopsEnumerated}`);
-    if (loopsEnumerated[dest[currentIndex]] !== undefined) {
-      console.log('loop found');
-      currentLoop++;
-      currentIndex = loopsEnumerated.findIndex(Object.is.bind(null, undefined));
-    } else {
-      loopsEnumerated[dest[currentIndex]] = currentLoop;
-      currentIndex = dest[currentIndex];
-      visited++;
+  while (traced.length < mod) {
+    // find next untraced node
+    for (let i = 0; i < mod; i++) {
+      if (!traced.includes(i)) {
+        frontier.push(i);
+        break;
+      }
     }
+
+    // trace the frontier forwards and backwards
+    while (frontier.length > 0) {
+      if (traced.includes(frontier[0])) {
+        frontier.shift();
+        continue;
+      }
+      // add the destination to the frontier
+      frontier.push(dest[frontier[0]]);
+
+      // find all nodes whose destination is the current node
+      for (let j = 0; j < mod; j++) {
+        if (dest[j] === frontier[0]) {
+          frontier.push(j);
+        }
+      }
+
+      // add the current node to the traced list
+      let completed = frontier.shift();
+      enumerated[completed] = loopNumber;
+      traced.push(completed);
+    }
+    loopNumber++
   }
 
-  console.log(loopsEnumerated);
-  return loopsEnumerated;
+  return enumerated;
 }
 
 
@@ -154,7 +168,7 @@ const initLines = () => {
     .attr('y1', 0)
     .attr('x2', 0)
     .attr('y2', 0)
-    .style('stroke-width', 1)
+    .style('stroke-width', 5)
 }
 
 // Draw the dots
@@ -193,9 +207,7 @@ const updateDisplay = (mult, mod) => {
   const dots = calcDots(mod);
   updateDots(dots);
   const dest = calcDestinations(mult, mod);
-  // TODO
-  // const loops = calcLoops(dest, mod);
-  const loops = [];
+  const loops = calcLoops(dest, mod);
   updateLines(dots, dest, loops);
 };
 
