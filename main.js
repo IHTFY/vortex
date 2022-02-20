@@ -2,6 +2,8 @@
 let multiplier = 2;
 let modulus = 9;
 let dots = [];
+let destinations = [0, 2, 4, 3, 8, 1, 6, 5, 7];
+
 
 // HTML elements
 const multiplierInput = document.querySelector('#multiplierInput');
@@ -39,7 +41,7 @@ const drawDots = (mod) => {
     const y = C + R * Math.sin(offset + i * 2 * Math.PI / mod);
     dots.push({ x, y });
   }
-  
+
   svg
     .selectAll('circle')
     .data(dots)
@@ -49,13 +51,29 @@ const drawDots = (mod) => {
     .attr('cy', (d) => d.y)
     .attr('r', (d) => R / 200)
     .style('fill', 'black');
+};
 
-}
+const drawLines = (mod, mult) => {
+  destinations = dots.map((v, i) => (i * mult) % mod);
+
+  for (let i = 0; i < mod; i++) {
+    // draw a line from dots[i] to dots[destinations[i]]
+    svg
+      .append('line')
+      .attr('x1', dots[i].x)
+      .attr('y1', dots[i].y)
+      .attr('x2', dots[destinations[i]].x)
+      .attr('y2', dots[destinations[i]].y)
+      .style('stroke', 'black')
+      .style('stroke-width', 1);
+  }
+};
 
 // A function that updates the display
 const updateDisplay = (mult, mod) => {
   svg.selectAll('*').remove();
   drawDots(mod);
+  drawLines(mod, mult);
 };
 
 // A function that updates the multiplier
