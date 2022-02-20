@@ -1,8 +1,6 @@
 // Global variables
 let multiplier = 2;
 let modulus = 9;
-let dots = [];
-let destinations = [];
 
 // HTML elements
 const multiplierInput = document.querySelector('#multiplierInput');
@@ -13,7 +11,7 @@ const display = document.querySelector('#display');
 // Calculate display size
 const W = display.clientWidth;
 const H = W;
-const R = W * 0.4;
+const R = W * 0.45;
 const C = W / 2
 
 // Create the SVG element
@@ -47,19 +45,21 @@ const calcDots = (mod) => {
       y: C + R * Math.sin(angle)
     };
   };
+  return dots;
 };
 
 // Calculate Destinations
 const calcDestinations = (mult, mod) => {
-  destinations = Array(1000).fill(0);
+  const destinations = Array(1000).fill(0);
   for (let i = 0; i < mod; i++) {
     destinations[i] = (i * mult) % mod;
   }
+  return destinations;
 }
 
 // Initialize dots
 const initDots = () => {
-  dots = Array(1000).fill(0);
+  const dots = Array(1000).fill(0);
   dotSelection = svg.selectAll('circle[fill="orange"]').data(dots)
     .enter()
     .append('circle')
@@ -71,7 +71,7 @@ const initDots = () => {
 
 // Initilize lines
 const initLines = () => {
-  destinations = Array(1000).fill(0);
+  const destinations = Array(1000).fill(0);
   lineSelection = svg.selectAll('line').data(destinations)
     .enter()
     .append('line')
@@ -82,7 +82,6 @@ const initLines = () => {
     .style('stroke', 'navy')
     .style('stroke-width', 1);
 }
-
 
 // Draw the dots
 const updateDots = (dots) => {
@@ -108,16 +107,16 @@ const updateLines = (dots, destinations) => {
 
 const initDisplay = () => {
   drawCircle(C, R);
-  initLines(destinations);
-  initDots(dots);
+  initLines();
+  initDots();
 };
 
 // A function that updates the display
 const updateDisplay = (mult, mod) => {
-  calcDots(mod);
+  const dots = calcDots(mod);
   updateDots(dots);
-  calcDestinations(mult, mod);
-  updateLines(dots, destinations);
+  const dest = calcDestinations(mult, mod);
+  updateLines(dots, dest);
 };
 
 // A function that updates the multiplier
