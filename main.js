@@ -26,7 +26,6 @@ const svg = d3.create('svg').attr('viewBox', [0, 0, W, H]);
 display.appendChild(svg.node());
 
 
-
 // i ∈ ℤ : i ∈ [1, floor(modulus / 2)]
 // distance = min(|a-b|, modulus - |a-b|)]
 const distance = (origin, destination, mod) => {
@@ -36,12 +35,16 @@ const distance = (origin, destination, mod) => {
   return dist;
 
 };
-const lineColor = (origin, destination, mod) => {
-  const dist = distance(origin, destination, mod);
+const lineColor = (startIndex, endIndex, mod, loops) => {
+  const dist = distance(startIndex, endIndex, mod);
   if (dist < 1) return 'none';
   if (!colorLinesCheckbox.checked) return 'navy';
   if (byLengthCheckbox.checked) return d3.interpolateHclLong("blue", "red")(dist / Math.floor(mod / 2));
-  if (byLoopCheckbox.checked) return 'black';
+  // TODO
+  // if (byLoopCheckbox.checked) {
+  //   const numLoops = Math.max(...loops);
+  //   return d3.interpolateHclLong("blue", "red")(loops[startIndex] / numLoops);
+  // };
   return 'navy';
 };
 
@@ -101,6 +104,33 @@ const calcDestinations = (mult, mod) => {
   return destinations;
 }
 
+// TODO
+// Calculate Loops
+const calcLoops = (dest, mod) => {
+  console.log(dest);
+  let loopsEnumerated = Array(mod); // [0, 1, 1, 2, 1, 1, 2, 1, 1]
+  let currentLoop = 0;
+  let currentIndex = 0;
+
+  let iter = 0;
+  for (let visited = 0; visited < mod && iter < 50; iter++) {
+    console.log(`${currentLoop} : ${currentIndex}=>${dest[currentIndex]} : ${loopsEnumerated}`);
+    if (loopsEnumerated[dest[currentIndex]] !== undefined) {
+      console.log('loop found');
+      currentLoop++;
+      currentIndex = loopsEnumerated.findIndex(Object.is.bind(null, undefined));
+    } else {
+      loopsEnumerated[dest[currentIndex]] = currentLoop;
+      currentIndex = dest[currentIndex];
+      visited++;
+    }
+  }
+
+  console.log(loopsEnumerated);
+  return loopsEnumerated;
+}
+
+
 // Initialize dots
 const initDots = () => {
   const dots = Array(MAX).fill(0);
@@ -138,11 +168,11 @@ const updateDots = dots => {
 };
 
 // Draw the lines
-const updateLines = (dots, destinations) => {
+const updateLines = (dots, destinations, loops) => {
 
   lineSelection
     .data(destinations)
-    .attr('stroke', (d, i) => lineColor(i, d, modulus))
+    .attr('stroke', (d, i) => lineColor(i, d, modulus, loops))
     .attr('marker-end', (d, i) => distance(i, d, modulus) < 1 || !showArrowsCheckbox.checked ? 'none' : 'url(#arrowhead)')
     .transition()
     .duration(MAX)
@@ -163,7 +193,10 @@ const updateDisplay = (mult, mod) => {
   const dots = calcDots(mod);
   updateDots(dots);
   const dest = calcDestinations(mult, mod);
-  updateLines(dots, dest);
+  // TODO
+  // const loops = calcLoops(dest, mod);
+  const loops = [];
+  updateLines(dots, dest, loops);
 };
 
 // If checkboxes change, update display
