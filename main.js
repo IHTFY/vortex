@@ -2,8 +2,7 @@
 let multiplier = 2;
 let modulus = 9;
 let dots = [];
-let destinations = [0, 2, 4, 3, 8, 1, 6, 5, 7];
-
+let destinations = [];
 
 // HTML elements
 const multiplierInput = document.querySelector('#multiplierInput');
@@ -11,7 +10,7 @@ const multiplierSlider = document.querySelector('#multiplierSlider');
 const display = document.querySelector('#display');
 
 
-// Initialize the display
+// Calculate display size
 const W = display.clientWidth;
 const H = W;
 const R = W * 0.4;
@@ -21,59 +20,102 @@ const C = W / 2
 const svg = d3.create('svg').attr('viewBox', [0, 0, W, H]);
 display.appendChild(svg.node());
 
-// draw a circle using D3
-svg
-  .append('circle')
-  .attr('cx', C)
-  .attr('cy', C)
-  .attr('r', R)
-  .style('fill', 'none')
-  .style('stroke', 'black')
-  .style('stroke-width', '2px');
+// D3 selections
+let dotSelection;
+let lineSelection;
 
-
-
-const drawDots = (mod) => {
-  const offset = -Math.PI / 2;
-  dots = [];
-  for (let i = 0; i < mod; i++) {
-    const x = C + R * Math.cos(offset + i * 2 * Math.PI / mod);
-    const y = C + R * Math.sin(offset + i * 2 * Math.PI / mod);
-    dots.push({ x, y });
-  }
-
+// Draw the circle
+const drawCircle = (C, R) => {
   svg
-    .selectAll('circle')
-    .data(dots)
-    .enter()
     .append('circle')
-    .attr('cx', (d) => d.x)
-    .attr('cy', (d) => d.y)
-    .attr('r', (d) => R / 200)
-    .style('fill', 'black');
+    .attr('cx', C)
+    .attr('cy', C)
+    .attr('r', R)
+    .style('fill', 'none')
+    .style('stroke', 'gray')
+    .style('stroke-width', '5px');
 };
 
-const drawLines = (mod, mult) => {
-  destinations = dots.map((v, i) => (i * mult) % mod);
-
+// Calculate Dots
+const calcDots = (mod) => {
+  const offset = -Math.PI / 2;
+  dots = Array(1000).fill({ x: C, y: C - R });
   for (let i = 0; i < mod; i++) {
-    // draw a line from dots[i] to dots[destinations[i]]
-    svg
-      .append('line')
-      .attr('x1', dots[i].x)
-      .attr('y1', dots[i].y)
-      .attr('x2', dots[destinations[i]].x)
-      .attr('y2', dots[destinations[i]].y)
-      .style('stroke', 'black')
-      .style('stroke-width', 1);
+    const angle = (i * (Math.PI * 2)) / mod + offset;
+    dots[i] = {
+      x: C + R * Math.cos(angle),
+      y: C + R * Math.sin(angle)
+    };
+  };
+};
+
+// Calculate Destinations
+const calcDestinations = (mult, mod) => {
+  destinations = Array(1000).fill(0);
+  for (let i = 0; i < mod; i++) {
+    destinations[i] = (i * mult) % mod;
   }
+}
+
+// Initialize dots
+const initDots = () => {
+  dots = Array(1000).fill(0).map((v, i) => Math.random() * W);
+  dotSelection = svg.selectAll('circle[fill="orange"]').data(dots)
+    .enter()
+    .append('circle')
+    .attr('r', R / 50)
+    .style('fill', 'orange')
+    .attr('cx', C)
+    .attr('cy', C - R);
+}
+
+// Initilize lines
+const initLines = () => {
+  calcDestinations(multiplier, modulus);
+  lineSelection = svg.selectAll('line').data(destinations)
+    .enter()
+    .append('line')
+    .attr('x1', 0)
+    .attr('y1', 0)
+    .attr('x2', 0)
+    .attr('y2', 0)
+    .style('stroke', 'navy')
+    .style('stroke-width', 1);
+}
+
+
+// Draw the dots
+const updateDots = (dots) => {
+  dotSelection
+    .data(dots)
+    .transition()
+    .duration(100)
+    .attr('cx', (d) => d.x)
+    .attr('cy', (d) => d.y);
+};
+
+// Draw the dots
+const updateLines = (destinations) => {
+  console.log(destinations);
+  lineSelection
+    .data(destinations)
+    .transition()
+    .duration(100)
+    .attr('x1', (d, i) => dots[i].x)
+    .attr('y1', (d, i) => dots[i].y)
+    .attr('x2', (d) => dots[d].x)
+    .attr('y2', (d) => dots[d].y);
 };
 
 // A function that updates the display
+drawCircle(C, R);
+initDots(dots);
+initLines(destinations);
 const updateDisplay = (mult, mod) => {
-  svg.selectAll('*').remove();
-  drawDots(mod);
-  drawLines(mod, mult);
+  calcDots(mod);
+  calcDestinations(mult, mod);
+  updateLines(destinations);
+  updateDots(dots);
 };
 
 // A function that updates the multiplier
@@ -88,7 +130,9 @@ const updateModulus = (v) => {
   updateDisplay(multiplier, modulus);
 };
 
-/** Link inputs to variables and eachother */
+/** 
+ * Link inputs to variables and eachother
+ */
 // The Multiplier
 multiplierInput.oninput = (e) => {
   updateMultiplier(e.target.value);
@@ -111,8 +155,9 @@ modulusSlider.oninput = (e) => {
   modulusInput.labels[0].classList.add('active');
 }
 
-
-// Initialze the drawing
+/**
+ * Initialize the drawing
+ */
 updateMultiplier(multiplier);
 updateModulus(modulus);
 updateDisplay(multiplier, modulus);
