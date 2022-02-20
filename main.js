@@ -5,6 +5,7 @@ let modulus;
 // HTML elements
 const multiplierInput = document.querySelector('#multiplierInput');
 const multiplierSlider = document.querySelector('#multiplierSlider');
+const display = document.querySelector('#display');
 
 /** Link inputs to variables and eachother */
 // The Multiplier
@@ -30,12 +31,22 @@ modulusSlider.oninput = (e) => {
 }
 
 
+// make the element the largest square that fits on screen
+
+
+const W = display.clientWidth;
+const H = W;
+
+
+// Create the SVG element
+const svg = d3.create('svg').attr('viewBox', [0, 0, W, H]);
+display.appendChild(svg.node());
+
 // draw a circle using D3
-const svg = d3.select('#display');
 svg
   .append('circle')
-  .attr('cx', '50%')
-  .attr('cy', '50%')
-  .attr('r', 100)
+  .attr('cx', W / 2)
+  .attr('cy', H / 2)
+  .attr('r', W * 0.4)
   .style('fill', 'none')
-  .style('stroke', 'black');
+  .style('stroke', 'black').style('stroke-width', '2px');
