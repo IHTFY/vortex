@@ -37,6 +37,7 @@
 
   <body>
     <div class="container">
+      <!-- Intro -->
       <div class="row">
         <h1>Vortex</h1>
         <div class="col s12">
@@ -46,59 +47,65 @@
           </p>
         </div>
       </div>
-      <form action="#">
-      <div class="row">
-        <div class="col s12 xl4">
-            <div class="row">
-              <div class="col s2 m3 input-field">
-                <input
-                  id="multiplierInput"
-                  type="number"
-                  value="2"
-                  min="1"
-                  max="100"
-                  class="validate"
-                />
-                <label for="multiplierInput">Multiplier</label>
-              </div>
-              <p class="col s10 m9 range-field">
-                <input
-                  type="range"
-                  id="multiplierSlider"
-                  value="2"
-                  min="1"
-                  max="100"
-                />
-                <label for="multiplierSlider">Multiplier</label>
-              </p>
-            </div>
-            
-            <div class="row">
-            <div class="col s2 m3 input-field">
-              <input
-                id="modulusInput"
-                type="number"
-                value="9"
-                min="1"
-                max="100"
-                class="validate"
-              />
-              <label for="modulusInput">Modulus</label>
-            </div>
-            <p class="col s10 m9 range-field">
-              <input
-                type="range"
-                id="modulusSlider"
-                value="9"
-                min="1"
-                max="100"
-              />
-              <label for="modulusSlider">Modulus</label>
-            </p>
-          </div>
+      <!-- row -->
 
-          <div class="row">
-            <div class="col s12">
+      <!-- Content Row-->
+      <div class="row">
+        <!-- Control Column -->
+        <div class="col s12 xl6">
+          <form action="#">
+            <!-- Sliders Column-->
+            <div class="col s8">
+              <div class="row">
+                <div class="col s2 m3 input-field">
+                  <input
+                    id="multiplierInput"
+                    type="number"
+                    value="2"
+                    min="1"
+                    max="250"
+                    class="validate"
+                  />
+                  <label for="multiplierInput">Multiplier</label>
+                </div>
+                <p class="col s10 m9 range-field">
+                  <input
+                    type="range"
+                    id="multiplierSlider"
+                    value="2"
+                    min="1"
+                    max="250"
+                  />
+                  <label for="multiplierSlider">Multiplier</label>
+                </p>
+
+                <div class="col s2 m3 input-field">
+                  <input
+                    id="modulusInput"
+                    type="number"
+                    value="9"
+                    min="1"
+                    max="250"
+                    class="validate"
+                  />
+                  <label for="modulusInput">Modulus</label>
+                </div>
+                <p class="col s10 m9 range-field">
+                  <input
+                    type="range"
+                    id="modulusSlider"
+                    value="9"
+                    min="1"
+                    max="250"
+                  />
+                  <label for="modulusSlider">Modulus</label>
+                </p>
+              </div>
+            </div>
+            <!-- End Sliders Column -->
+
+            <!-- Checkboxes -->
+            <div class="col s4">
               <p>
                 <label for="showArrowsCheckbox">
                   <input type="checkbox" id="showArrowsCheckbox" />
@@ -113,7 +120,12 @@
               </p>
               <p>
                 <label for="byLengthCheckbox">
-                  <input type="radio" name="colorMode" id="byLengthCheckbox" checked />
+                  <input
+                    type="radio"
+                    name="colorMode"
+                    id="byLengthCheckbox"
+                    checked
+                  />
                   <span>By Length</span>
                 </label>
               </p>
@@ -124,11 +136,14 @@
                 </label>
               </p>
             </div>
-          </div>
-        </form>
+          </form>
         </div>
+
+        <!-- SVG -->
+        <div id="display" class="col s12 xl6"></div>
       </div>
-      <div id="display" class="col s12 xl8"></div>
+      <!-- End Content Row -->
     </div>
+    <!-- container -->
   </body>
 </html>

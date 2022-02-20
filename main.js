@@ -1,6 +1,7 @@
 // Global variables
 let multiplier = 2;
 let modulus = 9;
+const MAX = 250; // html has hard coded max="250"
 
 // HTML elements
 const multiplierInput = document.querySelector('#multiplierInput');
@@ -80,7 +81,7 @@ const drawCircle = (C, R) => {
 // Calculate Dots
 const calcDots = mod => {
   const offset = -Math.PI / 2;
-  dots = Array(100).fill({ x: C, y: C - R });
+  dots = Array(MAX).fill({ x: C, y: C - R });
   for (let i = 0; i < mod; i++) {
     const angle = (i * (Math.PI * 2)) / mod + offset;
     dots[i] = {
@@ -93,7 +94,7 @@ const calcDots = mod => {
 
 // Calculate Destinations
 const calcDestinations = (mult, mod) => {
-  const destinations = Array(100).fill(0);
+  const destinations = Array(MAX).fill(0);
   for (let i = 0; i < mod; i++) {
     destinations[i] = (i * mult) % mod;
   }
@@ -102,7 +103,7 @@ const calcDestinations = (mult, mod) => {
 
 // Initialize dots
 const initDots = () => {
-  const dots = Array(100).fill(0);
+  const dots = Array(MAX).fill(0);
   dotSelection = svg.selectAll('circle[fill="orange"]').data(dots)
     .enter()
     .append('circle')
@@ -114,7 +115,7 @@ const initDots = () => {
 
 // Initilize lines
 const initLines = () => {
-  const destinations = Array(100).fill(0);
+  const destinations = Array(MAX).fill(0);
 
   lineSelection = svg.selectAll('line').data(destinations)
     .enter()
@@ -131,7 +132,7 @@ const updateDots = dots => {
   dotSelection
     .data(dots)
     .transition()
-    .duration(100)
+    .duration(MAX)
     .attr('cx', d => d.x)
     .attr('cy', d => d.y);
 };
@@ -144,7 +145,7 @@ const updateLines = (dots, destinations) => {
     .attr('stroke', (d, i) => lineColor(i, d, modulus))
     .attr('marker-end', (d, i) => distance(i, d, modulus) < 1 || !showArrowsCheckbox.checked ? 'none' : 'url(#arrowhead)')
     .transition()
-    .duration(100)
+    .duration(MAX)
     .attr('x1', (d, i) => dots[i].x)
     .attr('y1', (d, i) => dots[i].y)
     .attr('x2', d => dots[d].x)
