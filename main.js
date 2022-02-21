@@ -7,6 +7,7 @@ const MAX = 250; // html has hard coded max="250"
 const multiplierInput = document.querySelector('#multiplierInput');
 const multiplierSlider = document.querySelector('#multiplierSlider');
 
+const showDotsCheckbox = document.querySelector('#showDotsCheckbox');
 const showLabelsCheckbox = document.querySelector('#showLabelsCheckbox');
 const showArrowsCheckbox = document.querySelector('#showArrowsCheckbox');
 const colorLinesCheckbox = document.querySelector('#colorLinesCheckbox');
@@ -154,7 +155,7 @@ const initDots = () => {
     .enter()
     .append('circle')
     .attr('r', R / 50)
-    .style('fill', 'orange')
+    .style('fill', 'non')
     .attr('cx', C)
     .attr('cy', C - R);
 
@@ -191,7 +192,8 @@ const updateDots = dots => {
     .transition()
     .duration(100)
     .attr('cx', d => d.x)
-    .attr('cy', d => d.y);
+    .attr('cy', d => d.y)
+    .attr('fill', showDotsCheckbox.checked ? 'orange' : 'none');
 
 
   labelSelection
@@ -234,6 +236,7 @@ const updateDisplay = (mult, mod) => {
 };
 
 // If checkboxes change, update display
+showDotsCheckbox.addEventListener('change', () => updateDisplay(multiplier, modulus));
 showLabelsCheckbox.addEventListener('change', () => updateDisplay(multiplier, modulus));
 showArrowsCheckbox.addEventListener('change', () => updateDisplay(multiplier, modulus));
 
