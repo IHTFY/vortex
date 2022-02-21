@@ -7,6 +7,7 @@ const MAX = 250; // html has hard coded max="250"
 const multiplierInput = document.querySelector('#multiplierInput');
 const multiplierSlider = document.querySelector('#multiplierSlider');
 
+const showLabelsCheckbox = document.querySelector('#showLabelsCheckbox');
 const showArrowsCheckbox = document.querySelector('#showArrowsCheckbox');
 const colorLinesCheckbox = document.querySelector('#colorLinesCheckbox');
 const byLengthCheckbox = document.querySelector('#byLengthCheckbox');
@@ -64,6 +65,7 @@ svg.append('defs').append('marker')
 // D3 selections
 let dotSelection;
 let lineSelection;
+let labelSelection;
 
 // Draw the circle
 const drawCircle = (C, R) => {
@@ -155,7 +157,18 @@ const initDots = () => {
     .style('fill', 'orange')
     .attr('cx', C)
     .attr('cy', C - R);
-}
+
+  labelSelection = svg.selectAll('circle[fill="orange"]').data(dots)
+    .enter()
+    .append('text')
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'central')
+    .attr('fill', 'none')
+    .text((d, i) => i);
+
+};
 
 // Initilize lines
 const initLines = () => {
@@ -176,20 +189,29 @@ const updateDots = dots => {
   dotSelection
     .data(dots)
     .transition()
-    .duration(MAX)
+    .duration(100)
     .attr('cx', d => d.x)
     .attr('cy', d => d.y);
+
+
+  labelSelection
+    .data(dots)
+    .transition()
+    .duration(100)
+    .attr('x', d => (1.05 * (d.x - C)) + C)
+    .attr('y', d => (1.05 * (d.y - C)) + C)
+    .attr('fill', (d, i) => i >= modulus || !showLabelsCheckbox.checked ? 'none' : 'black');
+
 };
 
 // Draw the lines
 const updateLines = (dots, destinations, loops) => {
-
   lineSelection
     .data(destinations)
     .attr('stroke', (d, i) => lineColor(i, d, modulus, loops))
     .attr('marker-end', (d, i) => distance(i, d, modulus) < 1 || !showArrowsCheckbox.checked ? 'none' : 'url(#arrowhead)')
     .transition()
-    .duration(MAX)
+    .duration(100)
     .attr('x1', (d, i) => dots[i].x)
     .attr('y1', (d, i) => dots[i].y)
     .attr('x2', d => dots[d].x)
@@ -212,6 +234,7 @@ const updateDisplay = (mult, mod) => {
 };
 
 // If checkboxes change, update display
+showLabelsCheckbox.addEventListener('change', () => updateDisplay(multiplier, modulus));
 showArrowsCheckbox.addEventListener('change', () => updateDisplay(multiplier, modulus));
 
 colorLinesCheckbox.addEventListener('change', () => {
